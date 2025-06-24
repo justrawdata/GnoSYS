@@ -13,6 +13,7 @@ node_modules/
 # Ignore all files except README.md
 /data/*
 !data/README.md
+!data/documents.json
 
 # Docker volumes
 redis_data/
