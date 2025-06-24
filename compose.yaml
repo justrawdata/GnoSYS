@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: vault
+      POSTGRES_PASSWORD: vault
+      POSTGRES_DB: vault
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  redis:
+    image: redis:7
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+  typesense:
+    image: typesense/typesense:0.25.1
+    command: '--data-dir=/data --api-key=xyz'
+    volumes:
+      - typesense_data:/data
+    ports:
+      - "8108:8108"
+    restart: unless-stopped
+
+  terminusdb:
+    image: terminusdb/terminusdb-server:latest
+    ports:
+      - "6363:6363"
+    volumes:
+      - terminusdb_data:/app/db
+    restart: unless-stopped
+
+  backend:
+    build: ./backend
+    volumes:
+      - ./backend:/app
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+      - redis
+      - typesense
+      - terminusdb
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: docker.Dockerfile
+    volumes:
+      - ./frontend:/app
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+
+volumes:
+  postgres_data:
+  redis_data:
+  typesense_data:
+  terminusdb_data:

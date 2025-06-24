@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.pyc
+
+# Node
+node_modules/
+.next/
+
+# Env
+.env
+
+# Data directory
+# Ignore all files except README.md
+/data/*
+!data/README.md
+
+# Docker volumes
+redis_data/
+postgres_data/
+terminusdb_data/
+typesense_data/
