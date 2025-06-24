@@ -38,6 +38,7 @@ services:
     build: ./backend
     volumes:
       - ./backend:/app
+      - ./data:/app/data
     env_file:
       - .env
     depends_on:
@@ -45,6 +46,16 @@ services:
       - redis
       - typesense
       - terminusdb
+
+  worker:
+    build: ./backend
+    command: ["celery", "-A", "celery_worker.celery_app", "worker", "--loglevel=info"]
+    volumes:
+      - ./backend:/app
+      - ./data:/app/data
+    depends_on:
+      - redis
+      - backend
 
   frontend:
     build:
